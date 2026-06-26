@@ -80,3 +80,6 @@ jobs:
 
             IMPORTANTE: No modifiques el cuerpo original del issue. No escribas código.
             Solo asigna labels existentes y publica el comentario de diagnóstico.
+            El comentario debe estar escrito en Markdown válido que GitHub pueda renderizar
+            correctamente: usa encabezados con ##, listas con -, negritas con **, y bloques
+            de código con ``` cuando sea necesario.
