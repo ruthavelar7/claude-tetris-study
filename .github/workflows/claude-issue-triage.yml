@@ -1,0 +1,82 @@
+name: Claude Issue Triage
+
+# Runs automatically when an issue is opened or its body/title is edited.
+# Claude will assign existing labels and post a structured diagnostic comment.
+#
+# Note: this workflow can coexist with claude.yml — that one only fires when
+# the issue body contains '@claude'; this one fires on all issues regardless.
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  triage:
+    # Skip bot-generated events to avoid infinite loops (e.g. Claude editing an issue would re-trigger this)
+    if: github.event.sender.type != 'Bot'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write   # required to add labels and post comments
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Run Claude Issue Triage
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+
+          # Only allow the tools Claude needs for triage — no code modifications
+          claude_args: >-
+            --allowed-tools
+            "Bash(gh issue view *),Bash(gh issue edit *),Bash(gh issue comment *),Bash(gh label list *),Read,Grep,Glob"
+
+          prompt: |
+            Eres un asistente de triaje de issues para un proyecto de Tetris en JavaScript vanilla.
+            El repositorio contiene únicamente: game.js (~300 líneas), index.html y style.css.
+
+            Tu tarea para el issue #${{ github.event.issue.number }} es:
+
+            1. Leer el issue:
+               gh issue view ${{ github.event.issue.number }} --json number,title,body,labels
+
+            2. Obtener los labels que existen en el repositorio:
+               gh label list
+
+            3. Revisar el código fuente relevante usando Read y Grep para entender el contexto
+               técnico del problema (game.js contiene toda la lógica: board, pieces, collision,
+               game loop, line clearing, scoring/leveling, ghost piece).
+
+            4. Asignar entre 1 y 3 labels ÚNICAMENTE de los que existen en el repositorio
+               (no crees labels nuevos):
+               gh issue edit ${{ github.event.issue.number }} --add-label "label1,label2"
+
+            5. Publicar un comentario de diagnóstico estructurado con las siguientes secciones:
+               gh issue comment ${{ github.event.issue.number }} --body "..."
+
+               El comentario debe incluir:
+               ## 🔍 Diagnóstico automático
+
+               **Resumen**
+               Descripción breve del problema reportado.
+
+               **Causa probable / Análisis**
+               Análisis técnico basado en el código fuente. Menciona funciones o secciones
+               específicas de game.js que podrían estar involucradas.
+
+               **Archivos afectados**
+               Lista de archivos y funciones relevantes.
+
+               **Enfoque de solución sugerido**
+               Pasos o ideas concretas para implementar la solución, sin escribir código aún.
+
+               ---
+               *Generado automáticamente por Claude. Revisa y ajusta según sea necesario.*
+
+            IMPORTANTE: No modifiques el cuerpo original del issue. No escribas código.
+            Solo asigna labels existentes y publica el comentario de diagnóstico.
