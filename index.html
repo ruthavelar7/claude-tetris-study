@@ -42,20 +42,79 @@
           <span class="label">CONTROLS</span>
           <ul>
             <li><kbd>←</kbd><kbd>→</kbd> mover</li>
-            <li><kbd>↑</kbd> rotar</li>
+            <li><kbd>↑</kbd><kbd>X</kbd> rotar</li>
             <li><kbd>↓</kbd> bajar</li>
             <li><kbd>Space</kbd> caída</li>
-            <li><kbd>P</kbd> pausa</li>
+            <li><kbd>P</kbd><kbd>Esc</kbd> pausa</li>
           </ul>
         </div>
       </aside>
     </div>
 
-    <div id="overlay" class="overlay hidden">
+    <!-- Start Screen -->
+    <div id="start-screen" class="overlay">
       <div class="overlay-box">
-        <p id="overlay-title">GAME OVER</p>
-        <p id="overlay-score"></p>
-        <button id="restart-btn">Reiniciar</button>
+        <p class="overlay-title start-title">TETRIS</p>
+        <div class="records-container" id="records-start"></div>
+        <div class="start-settings">
+          <div class="setting-row">
+            <span class="label">NIVEL INICIAL</span>
+            <div class="level-picker" id="level-picker-start"></div>
+          </div>
+          <div class="setting-row">
+            <span class="label">SKIN</span>
+            <div class="skin-picker" id="skin-picker-start"></div>
+          </div>
+        </div>
+        <div class="overlay-actions">
+          <button id="start-btn" class="btn-primary">JUGAR</button>
+          <button id="reset-records-btn" class="btn-secondary">Resetear récords</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pause Overlay -->
+    <div id="pause-overlay" class="overlay hidden">
+      <div class="overlay-box">
+        <p class="overlay-title">PAUSA</p>
+        <div id="controls-panel" class="controls-panel hidden">
+          <ul>
+            <li><kbd>←</kbd><kbd>→</kbd> mover</li>
+            <li><kbd>↑</kbd><kbd>X</kbd> rotar</li>
+            <li><kbd>↓</kbd> bajar</li>
+            <li><kbd>Space</kbd> caída rápida</li>
+            <li><kbd>P</kbd><kbd>Esc</kbd> pausa</li>
+          </ul>
+        </div>
+        <div class="setting-row">
+          <span class="label">NIVEL INICIAL (próxima partida)</span>
+          <div class="level-picker" id="level-picker-pause"></div>
+        </div>
+        <div class="overlay-actions">
+          <button id="resume-btn" class="btn-primary">Reanudar</button>
+          <button id="restart-btn" class="btn-secondary">Reiniciar</button>
+          <button id="controls-btn" class="btn-secondary">Ver controles</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div id="gameover-overlay" class="overlay hidden">
+      <div class="overlay-box">
+        <p class="overlay-title">GAME OVER</p>
+        <p id="gameover-score"></p>
+        <div id="name-entry" class="name-entry hidden">
+          <p class="entry-label">¡Entraste al Top 5!</p>
+          <div class="name-input-row">
+            <input type="text" id="player-name" placeholder="Tu nombre" maxlength="12" autocomplete="off" />
+            <button id="save-score-btn" class="btn-primary">Guardar</button>
+          </div>
+        </div>
+        <div class="records-container" id="records-gameover"></div>
+        <div class="overlay-actions">
+          <button id="gameover-restart-btn" class="btn-primary">Reiniciar</button>
+          <button id="goto-start-btn" class="btn-secondary">Menú principal</button>
+        </div>
       </div>
     </div>
   </div>
